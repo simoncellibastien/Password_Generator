@@ -1,4 +1,4 @@
-import key, utils, variables
+import key, encryption, utils, variables
 
 """ Ask the user to enter the master password and the domain name """
 def getInfo():
@@ -48,8 +48,27 @@ def keySchedule(cipher_key, nbr_round):
                 sub_bytes_key = key.subBytes(piece_of_key)
                 tmp_list.append(key.addingXor(sub_bytes_key, list_of_key[i],variables.rcon[i], j))
             else:
-                tmp_list.append(key.addingXorForOthers(tmp_list[j-1], list_of_key[i], j))
-        list = utils.rotateMatrix(tmp_list)
-        list_of_key.append(list)
+                tmp_list.append(key.addingXorForOthers(tmp_list[j-1],list_of_key[i],j))
+        list_of_key.append(utils.rotateMatrix(tmp_list))
         tmp_list = []
     return list_of_key
+
+""" First round only addRoundKey with cypher key """
+def initialRound(password, key):
+    return encryption.addRoundKey(password,key)
+
+""" 9 main rounds : subBytes, shiftRows, mixColumns, addRoundKey """
+def mainRound(password, list_of_key):
+    for i in range(0,9):
+        password = encryption.subBytes(password)
+        password = encryption.shiftRows(password)
+        password = encryption.mixColumns(password)
+        password = encryption.addRoundKey(password,list_of_key[i+1])
+    return password
+
+""" Last round : subBytes, shiftRows, addRoundKey """
+def finalRound(password, key):
+    password = encryption.subBytes(password)
+    password = encryption.shiftRows(password)
+    password = encryption.addRoundKey(password,key)
+    return password
