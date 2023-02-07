@@ -72,3 +72,14 @@ def finalRound(password, key):
     password = encryption.shiftRows(password)
     password = encryption.addRoundKey(password,key)
     return password
+
+def cipherPassword(cipher_text):
+    cipher_password = ""
+    for i in range(len(cipher_text)):
+        for j in range(len(cipher_text[i])):
+            hex_number = cipher_text[i][j]
+            decimal = int(hex_number,16)%127
+            if decimal >= 33:
+                character = chr(decimal)
+                cipher_password = cipher_password + character
+    return cipher_password

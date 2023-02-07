@@ -5,10 +5,10 @@ def displayMatrix(matrix):
 
 def rotateMatrix(matrix):
     final_list = []
-    for i in range(0,4):
-    #for i in range(0,6):
-        final_list.append([matrix[0][i],matrix[1][i],matrix[2][i],matrix[3][i]])
-        #final_list.append([matrix[0][i],matrix[1][i],matrix[2][i],matrix[3][i],matrix[4][i],matrix[5][i]])
+    # for i in range(0,4):
+    for i in range(0,6):
+        #final_list.append([matrix[0][i],matrix[1][i],matrix[2][i],matrix[3][i]])
+        final_list.append([matrix[0][i],matrix[1][i],matrix[2][i],matrix[3][i],matrix[4][i],matrix[5][i]])
     return final_list
 
 def displayKeys(matrix):
