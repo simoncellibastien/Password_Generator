@@ -8,13 +8,15 @@ import algo, utils
 
 """ Main function """
 if __name__ == "__main__":
-    # master, domain = algo.getInfo()
-    master = "this is a master password test"
+    # master, domain, secret = algo.getInfo()
+    #master = "this is a master password test"
+    master = "je m'appelle Bastien Simoncelli"
     domain = "facebook.com"
+    secret = "toto"
     
     concat = algo.concatInfo(master, domain)
     text = algo.convertToHex(concat)
-    secret_key = algo.madeCipherKey(text)
+    secret_key = algo.madeCipherKey(secret)
     # secret_key = [['2B','28','AB','09'],['7E','AE','F7','CF'],['15','D2','15','4F'],['16','A6','88','3C']]
     # text = [['32','88','31','E0'],['43','5A','31','37'],['F6','30','98','07'],['A8','8D','A2','34']]
     list_of_key = algo.keySchedule(secret_key,10)

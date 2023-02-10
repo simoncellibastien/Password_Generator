@@ -1,14 +1,17 @@
 import key, encryption, utils, variables
+import hashlib
 
-""" Ask the user to enter the master password and the domain name """
+""" Ask the user to enter the master password, the domain name and a secret """
 def getInfo():
     master_pwd = input("Master password : ")
     domain = input("Domain name : ")
-    return master_pwd, domain
+    secret = input("Secret for the key : ")
+    return master_pwd, domain, secret
 
 """ Concatenate master password and domain name """
 def concatInfo(master_pwd, domain):
-    concat = master_pwd.replace(" ","") + domain.replace(".", "")
+    concat = master_pwd.replace(" ","") + domain
+    concat = hashlib.sha3_256(concat.encode('utf-8')).hexdigest()
     return concat
     
 """ Convert string into an hex string """
@@ -16,23 +19,20 @@ def convertToHex(string):
     str_hex_list = []
     str_hex_list_sub = []
     count = 1
-    for char in string:
-        str_hex_list_sub.append(format(ord(char), "x"))
+    for i in range(len(string)):
+        str_hex_list_sub.append(format(ord(string[i]), "x"))
         if count%6 == 0:
             str_hex_list.append(str_hex_list_sub)
             str_hex_list_sub = []
         count += 1
+        if i == 36:
+            return str_hex_list
     return str_hex_list
 
 """ Create the cipher key (288 bits) based on master password and domain """
-def madeCipherKey(string_hex):
-    cipher_key = []
-    cipher_key.append(string_hex[5])
-    cipher_key.append(string_hex[2])
-    cipher_key.append(string_hex[4])
-    cipher_key.append(string_hex[1])
-    cipher_key.append(string_hex[0])
-    cipher_key.append(string_hex[3])
+def madeCipherKey(secret):
+    hash = hashlib.sha3_256(secret.encode('utf-8')).hexdigest()
+    cipher_key = convertToHex(hash)
     return cipher_key
 
 """ Generate nbr_round sub key from cipher_key """
