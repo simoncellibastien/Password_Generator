@@ -36,7 +36,7 @@ def subBytes(matrix):
         tmp_list = []
     return final_matrix
 
-""" Shift by one byte for the second line, two bytes for the third line, three bytes for the last line """
+""" Shift by one byte for the second line, two bytes for the third line, three bytes for the last line and so on and so on """
 def shiftRows(matrix):
     for i in range(0, len(matrix)):
         matrix = offset(matrix, i)

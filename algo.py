@@ -1,12 +1,11 @@
 import key, encryption, utils, variables
 import hashlib
 
-""" Ask the user to enter the master password, the domain name and a secret """
+""" Ask the user to enter the master password, the domain name """
 def getInfo():
     master_pwd = input("Master password : ")
     domain = input("Domain name : ")
-    secret = input("Secret for the key : ")
-    return master_pwd, domain, secret
+    return master_pwd, domain
 
 """ Concatenate master password and domain name """
 def concatInfo(master_pwd, domain):
@@ -30,7 +29,12 @@ def convertToHex(string):
     return str_hex_list
 
 """ Create the cipher key (288 bits) based on master password and domain """
-def madeCipherKey(secret):
+def madeCipherKey(master, domain):
+    len_master = int(len(master)/2)
+    len_domain = int(len(domain)/2)
+    
+    secret = master[0:len_master] + domain[0:len_domain] + master[len_master:] + domain[len_domain:]
+    
     hash = hashlib.sha3_256(secret.encode('utf-8')).hexdigest()
     cipher_key = convertToHex(hash)
     return cipher_key
@@ -46,27 +50,27 @@ def keySchedule(cipher_key, nbr_round):
             if j == 0:
                 piece_of_key = key.rotWord(list_of_key[i])
                 sub_bytes_key = key.subBytes(piece_of_key)
-                tmp_list.append(key.addingXor(sub_bytes_key, list_of_key[i],variables.rcon[i], j))
+                tmp_list.append(key.addingXor(sub_bytes_key, list_of_key[i],variables.rcon[i%10], j))
             else:
                 tmp_list.append(key.addingXorForOthers(tmp_list[j-1],list_of_key[i],j))
         list_of_key.append(utils.rotateMatrix(tmp_list))
         tmp_list = []
     return list_of_key
 
-""" First round only addRoundKey with cypher key """
+""" First round  """
 def initialRound(password, key):
-    return encryption.addRoundKey(password,key)
+    return encryption.addRoundKey(encryption.mixColumns(password),key)
 
-""" 9 main rounds : subBytes, shiftRows, mixColumns, addRoundKey """
+""" 9 main rounds """
 def mainRound(password, list_of_key):
-    for i in range(0,9):
+    for i in range(1,len(list_of_key)-1):
         password = encryption.subBytes(password)
         password = encryption.shiftRows(password)
         password = encryption.mixColumns(password)
-        password = encryption.addRoundKey(password,list_of_key[i+1])
+        password = encryption.addRoundKey(password,list_of_key[i])
     return password
 
-""" Last round : subBytes, shiftRows, addRoundKey """
+""" Last round """
 def finalRound(password, key):
     password = encryption.subBytes(password)
     password = encryption.shiftRows(password)
@@ -81,5 +85,18 @@ def cipherPassword(cipher_text):
             decimal = int(hex_number,16)%127
             if decimal >= 33:
                 character = chr(decimal)
-                cipher_password = cipher_password + character
+            else:
+                character = chr(decimal+33)
+            cipher_password = cipher_password + character
     return cipher_password
+
+def performEncryption(master, domain):
+    concat = concatInfo(master, domain)
+    text = convertToHex(concat)
+    secret_key = madeCipherKey(master, domain)
+    list_of_key = keySchedule(secret_key,10)
+    password = initialRound(text,secret_key)
+    password = mainRound(password, list_of_key)
+    cipher_text = finalRound(password, list_of_key[-1])
+    result = cipherPassword(cipher_text)
+    return result

@@ -1,5 +1,5 @@
 
-import utils, variables
+import variables
 
 """ Change the location of the bytes """
 def rotWord(last_key):
