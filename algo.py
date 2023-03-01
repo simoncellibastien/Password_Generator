@@ -82,7 +82,7 @@ def cipherPassword(cipher_text):
     for i in range(len(cipher_text)):
         for j in range(len(cipher_text[i])):
             hex_number = cipher_text[i][j]
-            decimal = int(hex_number,16)%127
+            decimal = int(hex_number,16)%125
             if decimal >= 33:
                 character = chr(decimal)
             else:

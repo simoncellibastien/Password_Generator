@@ -10,6 +10,6 @@ import algo
 if __name__ == "__main__":
     #master, domain = algo.getInfo()
     master = "generate a password"
-    domain = "domain.com"
+    domain = "domain.com" 
     result = algo.performEncryption(master, domain)
-    print(result," => length pwd :",len(result))
+    print("Password :",'\n',result,'\n',"=> length pwd :",len(result))
