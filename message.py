@@ -1,4 +1,4 @@
-import variables, utils
+import variables, utils, copy
 
 """ xor text and round key """
 def addRoundKey(text, round_key):
@@ -20,27 +20,25 @@ def addRoundKey(text, round_key):
         tmp_text = []
         tmp_key = []
         tmp_list = []
-    final_text = utils.rotateMatrix(final_text)
     return final_text
 
 """ Substitute a bytes with bytes in sbox """
-def subBytes(matrix):
-    final_matrix = []
-    tmp_list = []
-    for list_bytes in matrix:
-        for bytes in list_bytes:
-            i = int(bytes[0], 16)
-            j = int(bytes[1], 16)
-            tmp_list.append(variables.Sbox[i][j])
-        final_matrix.append(tmp_list)
-        tmp_list = []
-    return final_matrix
+def subBytesMsg(msg):
+    sub_list = []
+    for list_hexa in msg:
+        sub_sub_list = []
+        for hexa in list_hexa:
+            i = int(hexa[0], 16)
+            j = int(hexa[1], 16)
+            sub_sub_list.append(variables.Sbox[i][j])
+        sub_list.append(sub_sub_list)
+    return sub_list
 
 """ Shift by one byte for the second line, two bytes for the third line, three bytes for the last line and so on and so on """
-def shiftRows(matrix):
-    for i in range(0, len(matrix)):
-        matrix = offset(matrix, i)
-    return matrix
+def shiftLines(msg):
+    for i in range(0, len(msg)):
+        msg = offset(msg, i)
+    return msg
 
 """ Shift a row """
 def offset(matrix, nbr):
@@ -49,23 +47,45 @@ def offset(matrix, nbr):
         matrix[nbr].append(byte)
     return matrix
 
-""" Mul rijandael by each column in matrix """
-def mixColumns(matrix):
-    matrix_list = []
-    final_matrix = []
+def madeRijndaelMixColumns(length):
+    sub_list = []
+    values = ['02', '01', '01', '03']
+    rijndael = ['02', '01', '01', '03']
+    length_rijndael = len(rijndael)
+    # Add rijndael pattern as long as the key length is not reached
+    while length_rijndael < length:
+        for x in values:
+            rijndael.append(x)
+        length_rijndael = len(rijndael)
+    # Cut to suits the key length
+    rijndael = rijndael[0:length]
+    # Make a shift for each lines to suits Rijndael's Galois field
+    for i in range(length):
+        sub_list.append(offsetRijndael(copy.deepcopy(rijndael), i))
+    return sub_list
+
+def offsetRijndael(sub_list, j):
+    for i in range(0,j):
+        hexa = sub_list.pop(-1)
+        sub_list.insert(0, hexa)
+    return sub_list
+
+""" Mul rijandael by each column in msg """
+def mixColumns(msg, rijndael):
+    msg_list = []
+    final_msg = []
     tmp_list = []
     
-    for j in range(len(matrix)):
-        for i in range(len(matrix)):
-            matrix_list.append(matrix[i][j])
-        for list in variables.rijindael:
-            tmp_list.append(firstColumn(matrix_list, list))
-        final_matrix.append(tmp_list)
-        matrix_list = []
+    for j in range(len(msg)):
+        for i in range(len(msg)):
+            msg_list.append(msg[i][j])
+        for list in rijndael:
+            tmp_list.append(firstColumn(msg_list, list))
+        final_msg.append(tmp_list)
+        msg_list = []
         tmp_list = []
     
-    final_matrix = utils.rotateMatrix(final_matrix)
-    return final_matrix
+    return final_msg
     
 def firstColumn(column, list):
     byte_list = []
