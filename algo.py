@@ -81,6 +81,9 @@ def executeRound(msg, list_of_key):
     print("Initial msg : ",msg)
     print("")
     for i in range(len(list_of_key)):
+        msg = message.addRoundKey(msg, list_of_key[i])
+        print("Msg after addRoundKey : ",msg)
+        print("")
         msg = message.subBytesMsg(msg)
         print("Msg after SubBytes : ",msg)
         print("")
@@ -105,7 +108,7 @@ def cipherPassword(cipher_text):
             else:
                 character = chr(decimal+33)
             cipher_password = cipher_password + character
-            if len(cipher_password) == 20:
+            if len(cipher_password) == 25:
                 return cipher_password
     return cipher_password
 

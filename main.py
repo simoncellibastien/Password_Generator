@@ -9,7 +9,7 @@ import algo
 """ Main function """
 if __name__ == "__main__":
     #master, domain = algo.getInfo()
-    master = "password test"
+    master = "My password"
     domain = "www.facebook.com" 
     result = algo.performEncryption(master, domain)
     print("Password :",'\n',result,'\n',"=> length pwd :",len(result))
