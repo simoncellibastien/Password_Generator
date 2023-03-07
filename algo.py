@@ -105,6 +105,8 @@ def cipherPassword(cipher_text):
             else:
                 character = chr(decimal+33)
             cipher_password = cipher_password + character
+            if len(cipher_password) == 20:
+                return cipher_password
     return cipher_password
 
 def performEncryption(master, domain):
