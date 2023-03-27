@@ -1,15 +1,21 @@
-import algo
+import algo, cgi, json
 
-""" To commit on github :
-    git add --all
-    git commit -m 'Un autre commit'
-    git push
-"""
+def main():
+    # Get content of master and domain from javascript
+    # form = cgi.FieldStorage()
+
+    # master = form.getvalue("master")
+    # domain = form.getvalue("domain")
+
+    master = "My password"
+    domain = "www.facebook.com"
+    result = algo.performEncryption(master, domain)
+
+    response = {"result": result}
+    print('Content-Type: application/json')
+    print('')
+    print(json.dumps(response))
 
 """ Main function """
 if __name__ == "__main__":
-    #master, domain = algo.getInfo()
-    master = "My password"
-    domain = "www.facebook.com" 
-    result = algo.performEncryption(master, domain)
-    print("Password :",'\n',result,'\n',"=> length pwd :",len(result))
+    main()
