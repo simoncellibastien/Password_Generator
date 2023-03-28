@@ -6,20 +6,13 @@ document.getElementById("submit-btn").onclick = function() {
     console.log('Master : ' + master);
     console.log('Domain : ' + domain);
 
-    fetch('C:/Users/basti/OneDrive/COURS/COURS CERI/M2/S4/APPLICATION SECURITE AVANCEE/TP/main.py', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          },
-          body: 'master=' + encodeURIComponent(master) + '&domain=' + encodeURIComponent(domain)
-        })
-        .then(response => response.json())
-        .then(data => {
-          // Handle the response from the server
-          console.log(data.result);
-        })
-        .catch(error => {
-          // Handle errors
-          console.error(error);
-    });
+    fetch('http://127.0.0.1:5000/password', {
+    method: 'POST',
+    body: JSON.stringify({ master: master, domain: domain })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data.result);
+      document.getElementById("output").innerHTML = data.result;    
+  });
 }
