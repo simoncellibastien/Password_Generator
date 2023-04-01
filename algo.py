@@ -44,6 +44,8 @@ def chooseKeyLength(key):
 
 """ Cut a string to size a length """
 def cutString(string, length):
+    while(len(string) < length): # if len string is inf to 64 (64 is default length of matrice 8x8)
+        string = string + string
     return string[0:length]
 
 """ Take as input a string and return an hex matrix """
@@ -125,92 +127,4 @@ def performEncryption(master, domain):
     list_key = keySchedule(tab_key,10)
     msg = executeRound(tab_msg, list_key)
     result = cipherPassword(msg)
-    return result
-
-# Change a random bit into master password
-def ChangeBit(master, domain):
-    my_str = ""
-    tab_char = [] # permit to store length of each character
-    for character in master:
-        tab_char.append(len(bin(ord(character))[2:]))
-        my_str += bin(ord(character))[2:]
-    choose_rand = randint(0, len(my_str))
-        
-    # Change into list to modify the character
-    temp = list(my_str)
-    
-    # Modify the bit
-    if my_str[choose_rand] == '0':
-        temp[choose_rand] = '1'
-    else:
-        temp[choose_rand] = '0'
-    
-    # List to string
-    my_str = "".join(temp)
-    
-    # Decode to string
-    master = binToString(my_str, tab_char)
-    
-    # Call performEncryption function
-    result = performEncryption(master, domain)
-    return result, choose_rand
-    
-# Convert a binary string into a string
-def binToString(bin, tab):
-    cpt = 0
-    new_str = ""
-    for len_cara in tab:
-        nbr = ""
-        for i in range(cpt, cpt+len_cara):
-            nbr += bin[i]
-        new_str += chr(int(nbr, 2))
-        cpt += len_cara
-    return new_str
-
-def onlyBit0(master, domain):
-    my_str = ""
-    tab_char = [] # permit to store length of each character
-    for character in master:
-        tab_char.append(len(bin(ord(character))[2:]))
-        my_str += bin(ord(character))[2:]
-    my_str = my_str.replace("1","0")
-    
-    # Decode to string
-    master = binToString(my_str, tab_char)
-    # Call performEncryption function
-    result = performEncryption(master, domain)
-    return result
-
-def onlyBit1(master, domain):
-    my_str = ""
-    tab_char = [] # permit to store length of each character
-    for character in master:
-        tab_char.append(len(bin(ord(character))[2:]))
-        my_str += bin(ord(character))[2:]
-    my_str = my_str.replace("0","1")
-    
-    # Decode to string
-    master = binToString(my_str, tab_char)
-    # Call performEncryption function
-    result = performEncryption(master, domain)
-    return result
-
-def seq0and1(master, domain):
-    my_str = ""
-    tab_char = [] # permit to store length of each character
-    for character in master:
-        tab_char.append(len(bin(ord(character))[2:]))
-        my_str += bin(ord(character))[2:]
-    
-    new_str = ""
-    for i in range(0, len(my_str)):
-        if i%2 == 0:
-            new_str += '0'
-        else:
-            new_str += '1'
-    
-    # Decode to string
-    master = binToString(new_str, tab_char)
-    # Call performEncryption function
-    result = performEncryption(master, domain)
     return result
